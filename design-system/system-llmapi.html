@@ -157,13 +157,20 @@
     margin: 0 -28px 48px;
     padding: 0 28px;
   }
-  nav.toc ul {
+  nav.toc .toc-inner {
     max-width: 1180px;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  nav.toc ul {
     list-style: none;
     display: flex;
     gap: 4px;
     padding: 0;
+    margin: 0;
     overflow-x: auto;
   }
   nav.toc a {
@@ -178,6 +185,29 @@
   }
   nav.toc a:hover { color: var(--ink); }
   nav.toc a.active { color: var(--accent); border-color: var(--accent); }
+
+  .next-section-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    height: 34px;
+    padding: 0 14px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: background-color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+  }
+  .next-section-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 88%, black); }
+  .next-section-btn:active:not(:disabled) { transform: translateY(1px); }
+  .next-section-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .next-section-btn svg { width: 14px; height: 14px; flex: none; }
 
   /* ---- Sections ---- */
   section.block { padding-top: 64px; scroll-margin-top: 60px; }
@@ -366,12 +396,20 @@
   </header>
 
   <nav class="toc">
-    <ul>
-      <li><a href="#colors">Color tokens</a></li>
-      <li><a href="#indigo">Indigo scale</a></li>
-      <li><a href="#typography">Typography</a></li>
-      <li><a href="#radius">Radius</a></li>
-    </ul>
+    <div class="toc-inner">
+      <ul>
+        <li><a href="#colors">Color tokens</a></li>
+        <li><a href="#indigo">Indigo scale</a></li>
+        <li><a href="#typography">Typography</a></li>
+        <li><a href="#radius">Radius</a></li>
+      </ul>
+      <button type="button" class="next-section-btn" id="next-section-btn" aria-label="Go to next section">
+        <span>Next</span>
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
   </nav>
 
   <section class="block" id="colors">
@@ -610,12 +648,25 @@
 
   const sections = [...document.querySelectorAll("section.block")];
   const links = [...document.querySelectorAll("nav.toc a")];
+  const order = sections.map(s => s.id);
+  const nextBtn = document.getElementById("next-section-btn");
+  let activeId = order[0];
+
+  function setActive(id) {
+    activeId = id;
+    links.forEach(l => l.classList.toggle("active", l.getAttribute("href") === `#${id}`));
+    nextBtn.disabled = order.indexOf(id) === order.length - 1;
+  }
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        links.forEach(l => l.classList.toggle("active", l.getAttribute("href") === `#${e.target.id}`));
-      }
+      if (e.isIntersecting) setActive(e.target.id);
     });
   }, { rootMargin: "-20% 0px -70% 0px" });
   sections.forEach(s => io.observe(s));
+
+  nextBtn.addEventListener("click", () => {
+    const nextId = order[order.indexOf(activeId) + 1];
+    if (nextId) document.getElementById(nextId).scrollIntoView({ behavior: "smooth" });
+  });
 </script>
