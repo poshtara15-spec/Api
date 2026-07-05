@@ -354,6 +354,67 @@
   }
   .radius-swatch .px { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
 
+  /* ---- Buttons ---- */
+  .btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .btn-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .btn-card .spec { font-family: var(--mono); font-size: 11.5px; line-height: 1.6; color: var(--faint); word-break: break-word; }
+  .btn-card .spec b { display: block; color: var(--ink-dim); font-weight: 500; margin-bottom: 2px; }
+
+  .demo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    font-weight: 500;
+    height: 40px;
+    padding: 0 16px;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  }
+  .demo-btn svg { width: 16px; height: 16px; flex: none; pointer-events: none; }
+  .demo-btn:disabled { pointer-events: none; opacity: 0.5; }
+  .demo-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .demo-btn--default { background: var(--accent); color: var(--accent-ink); }
+  .demo-btn--default:hover { background: color-mix(in srgb, var(--accent) 90%, transparent); }
+  .demo-btn--destructive { background: var(--danger); color: #ffffff; }
+  .demo-btn--destructive:hover { background: color-mix(in srgb, var(--danger) 90%, transparent); }
+  .demo-btn--outline { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+  .demo-btn--outline:hover { background: var(--surface-2); }
+  .demo-btn--secondary { background: var(--surface-2); color: var(--ink); }
+  .demo-btn--secondary:hover { background: color-mix(in srgb, var(--surface-2) 80%, var(--ink) 8%); }
+  .demo-btn--success { background: var(--success); color: #ffffff; }
+  .demo-btn--success:hover { background: color-mix(in srgb, var(--success) 88%, black); }
+  .demo-btn--warning { background: var(--warning); color: #ffffff; }
+  .demo-btn--warning:hover { background: color-mix(in srgb, var(--warning) 88%, black); }
+  .demo-btn--ghost { background: transparent; color: var(--ink); }
+  .demo-btn--ghost:hover { background: var(--surface-2); }
+  .demo-btn--link { background: transparent; color: var(--accent); padding: 0; height: auto; text-underline-offset: 4px; }
+  .demo-btn--link:hover { text-decoration: underline; }
+
+  .demo-btn--sm { height: 36px; padding: 0 12px; font-size: 13.5px; }
+  .demo-btn--lg { height: 44px; padding: 0 32px; font-size: 15px; }
+  .demo-btn--icon { height: 40px; width: 40px; padding: 0; }
+
   /* ---- Footer ---- */
   footer {
     margin-top: 72px;
@@ -378,6 +439,7 @@
     .type-row { grid-template-columns: 1fr; gap: 8px; }
     .type-meta { flex-direction: row; text-align: left; gap: 10px; flex-wrap: wrap; }
     .radius-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .btn-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 
@@ -402,6 +464,7 @@
         <li><a href="#indigo">Indigo scale</a></li>
         <li><a href="#typography">Typography</a></li>
         <li><a href="#radius">Radius</a></li>
+        <li><a href="#buttons">Buttons</a></li>
       </ul>
       <button type="button" class="next-section-btn" id="next-section-btn" aria-label="Go to next section">
         <span>Next</span>
@@ -497,6 +560,20 @@
     </div>
   </section>
 
+  <section class="block" id="buttons">
+    <div class="block-head">
+      <h2 class="section-title">Buttons</h2>
+      <span class="section-index">05</span>
+    </div>
+    <p class="section-note">Eight semantic variants and four sizes from the shared <code style="font-family:var(--mono)">&lt;Button&gt;</code> primitive. Every fill below resolves to a token defined above — nothing here introduces a new color.</p>
+
+    <h3 class="group-title">Variants</h3>
+    <div class="btn-grid" id="btn-variants"></div>
+
+    <h3 class="group-title">Sizes</h3>
+    <div class="btn-grid" id="btn-sizes"></div>
+  </section>
+
   <footer>
     <span>System LLMAPI — internal design reference</span>
     <span>Tokens generated from Figma · not for external distribution</span>
@@ -590,6 +667,24 @@
     ["0px", "0px"], ["4px", "4px"], ["8px", "8px"], ["16px", "16px"],
   ];
 
+  const buttonVariants = [
+    ["default", "Button", "bg-primary text-primary-foreground hover:bg-primary/90"],
+    ["destructive", "Delete", "bg-destructive text-destructive-foreground hover:bg-destructive/90"],
+    ["outline", "Button", "border border-input bg-background hover:bg-accent hover:text-accent-foreground"],
+    ["secondary", "Button", "bg-secondary text-secondary-foreground hover:bg-secondary/80"],
+    ["success", "Approve", "bg-emerald-500 text-white hover:bg-emerald-600"],
+    ["warning", "Review", "bg-amber-500 text-white hover:bg-amber-600"],
+    ["ghost", "Button", "hover:bg-accent hover:text-accent-foreground"],
+    ["link", "Learn more", "text-primary underline-offset-4 hover:underline"],
+  ];
+
+  const buttonSizes = [
+    ["default", "h-10 px-4 py-2"],
+    ["sm", "h-9 rounded-md px-3"],
+    ["lg", "h-11 rounded-md px-8"],
+    ["icon", "h-10 w-10"],
+  ];
+
   function swatchRow([name, cssVar, light, dark], useCase) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -644,6 +739,31 @@
     el.className = "radius-swatch";
     el.innerHTML = `<div class="box" style="border-radius:${px}"></div><span class="px">${label}</span>`;
     radiusWrap.appendChild(el);
+  });
+
+  const iconGlyph = `<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+
+  const btnVariantsWrap = document.getElementById("btn-variants");
+  buttonVariants.forEach(([variant, label, classes]) => {
+    const card = document.createElement("div");
+    card.className = "btn-card";
+    card.innerHTML = `
+      <button type="button" class="demo-btn demo-btn--${variant}">${label}</button>
+      <div class="spec"><b>variant="${variant}"</b>${classes}</div>
+    `;
+    btnVariantsWrap.appendChild(card);
+  });
+
+  const btnSizesWrap = document.getElementById("btn-sizes");
+  buttonSizes.forEach(([size, classes]) => {
+    const card = document.createElement("div");
+    card.className = "btn-card";
+    const isIcon = size === "icon";
+    card.innerHTML = `
+      <button type="button" class="demo-btn demo-btn--default demo-btn--${size}" ${isIcon ? 'aria-label="Icon button"' : ""}>${isIcon ? iconGlyph : "Button"}</button>
+      <div class="spec"><b>size="${size}"</b>${classes}</div>
+    `;
+    btnSizesWrap.appendChild(card);
   });
 
   const sections = [...document.querySelectorAll("section.block")];
