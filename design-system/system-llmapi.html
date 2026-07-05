@@ -355,13 +355,13 @@
   .radius-swatch .px { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
 
   /* ---- Buttons ---- */
-  .btn-grid {
+  .demo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
     gap: 12px;
     margin-bottom: 28px;
   }
-  .btn-card {
+  .demo-card {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -371,8 +371,8 @@
     border-radius: var(--radius);
     background: var(--surface);
   }
-  .btn-card .spec { font-family: var(--mono); font-size: 11.5px; line-height: 1.6; color: var(--faint); word-break: break-word; }
-  .btn-card .spec b { display: block; color: var(--ink-dim); font-weight: 500; margin-bottom: 2px; }
+  .demo-card .spec { font-family: var(--mono); font-size: 11.5px; line-height: 1.6; color: var(--faint); word-break: break-word; }
+  .demo-card .spec b { display: block; color: var(--ink-dim); font-weight: 500; margin-bottom: 2px; }
 
   .demo-btn {
     display: inline-flex;
@@ -415,6 +415,45 @@
   .demo-btn--lg { height: 44px; padding: 0 32px; font-size: 15px; }
   .demo-btn--icon { height: 40px; width: 40px; padding: 0; }
 
+  /* ---- Inputs ---- */
+  .demo-grid--fields { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .field-card { align-items: stretch; }
+  .field-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .demo-input {
+    width: 100%;
+    height: 40px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    padding: 0 12px;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+  .demo-input::placeholder { color: var(--muted); }
+  .demo-input--focused {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+  }
+  .demo-input:disabled { cursor: not-allowed; opacity: 0.5; }
+  .demo-input[type="file"] { padding: 8px 10px; font-size: 13px; }
+  .demo-input[type="file"]::file-selector-button {
+    border: none;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-right: 10px;
+  }
+
   /* ---- Footer ---- */
   footer {
     margin-top: 72px;
@@ -439,7 +478,7 @@
     .type-row { grid-template-columns: 1fr; gap: 8px; }
     .type-meta { flex-direction: row; text-align: left; gap: 10px; flex-wrap: wrap; }
     .radius-row { flex-direction: column; align-items: flex-start; gap: 14px; }
-    .btn-grid { grid-template-columns: 1fr 1fr; }
+    .demo-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 
@@ -465,6 +504,7 @@
         <li><a href="#typography">Typography</a></li>
         <li><a href="#radius">Radius</a></li>
         <li><a href="#buttons">Buttons</a></li>
+        <li><a href="#inputs">Inputs</a></li>
       </ul>
       <button type="button" class="next-section-btn" id="next-section-btn" aria-label="Go to next section">
         <span>Next</span>
@@ -568,10 +608,20 @@
     <p class="section-note">Eight semantic variants and four sizes from the shared <code style="font-family:var(--mono)">&lt;Button&gt;</code> primitive. Every fill below resolves to a token defined above — nothing here introduces a new color.</p>
 
     <h3 class="group-title">Variants</h3>
-    <div class="btn-grid" id="btn-variants"></div>
+    <div class="demo-grid" id="btn-variants"></div>
 
     <h3 class="group-title">Sizes</h3>
-    <div class="btn-grid" id="btn-sizes"></div>
+    <div class="demo-grid" id="btn-sizes"></div>
+  </section>
+
+  <section class="block" id="inputs">
+    <div class="block-head">
+      <h2 class="section-title">Inputs</h2>
+      <span class="section-index">06</span>
+    </div>
+    <p class="section-note">One <code style="font-family:var(--mono)">&lt;Input&gt;</code> primitive, shown across its states. Border and background are <var class="mono" style="font-family:var(--mono)">--line</var> and <var class="mono" style="font-family:var(--mono)">--paper</var> — no separate input palette.</p>
+
+    <div class="demo-grid demo-grid--fields" id="input-states"></div>
   </section>
 
   <footer>
@@ -685,6 +735,14 @@
     ["icon", "h-10 w-10"],
   ];
 
+  const inputStates = [
+    ["Default", { placeholder: "you@example.com" }, "placeholder:text-muted-foreground"],
+    ["Filled", { value: "ada@llmapi.dev" }, "bg-background text-base md:text-sm"],
+    ["Focused", { value: "sk-live-4f2a9c...", focused: true }, "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"],
+    ["Disabled", { value: "Read-only", disabled: true }, "disabled:cursor-not-allowed disabled:opacity-50"],
+    ["File", { type: "file" }, "file:border-0 file:bg-transparent file:font-medium"],
+  ];
+
   function swatchRow([name, cssVar, light, dark], useCase) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -746,7 +804,7 @@
   const btnVariantsWrap = document.getElementById("btn-variants");
   buttonVariants.forEach(([variant, label, classes]) => {
     const card = document.createElement("div");
-    card.className = "btn-card";
+    card.className = "demo-card";
     card.innerHTML = `
       <button type="button" class="demo-btn demo-btn--${variant}">${label}</button>
       <div class="spec"><b>variant="${variant}"</b>${classes}</div>
@@ -757,13 +815,37 @@
   const btnSizesWrap = document.getElementById("btn-sizes");
   buttonSizes.forEach(([size, classes]) => {
     const card = document.createElement("div");
-    card.className = "btn-card";
+    card.className = "demo-card";
     const isIcon = size === "icon";
     card.innerHTML = `
       <button type="button" class="demo-btn demo-btn--default demo-btn--${size}" ${isIcon ? 'aria-label="Icon button"' : ""}>${isIcon ? iconGlyph : "Button"}</button>
       <div class="spec"><b>size="${size}"</b>${classes}</div>
     `;
     btnSizesWrap.appendChild(card);
+  });
+
+  const inputWrap = document.getElementById("input-states");
+  inputStates.forEach(([label, attrs, classes]) => {
+    const card = document.createElement("div");
+    card.className = "demo-card field-card";
+
+    const fieldLabel = document.createElement("span");
+    fieldLabel.className = "field-label";
+    fieldLabel.textContent = label;
+
+    const input = document.createElement("input");
+    input.className = "demo-input" + (attrs.focused ? " demo-input--focused" : "");
+    input.type = attrs.type || "text";
+    if (attrs.placeholder) input.placeholder = attrs.placeholder;
+    if (attrs.value) input.value = attrs.value;
+    if (attrs.disabled) input.disabled = true;
+
+    const spec = document.createElement("div");
+    spec.className = "spec";
+    spec.innerHTML = `<b>${label}</b>${classes}`;
+
+    card.append(fieldLabel, input, spec);
+    inputWrap.appendChild(card);
   });
 
   const sections = [...document.querySelectorAll("section.block")];
